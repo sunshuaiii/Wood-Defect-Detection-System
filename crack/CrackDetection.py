@@ -11,22 +11,22 @@ gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
 # Image processing ( smoothing )
 # Averaging
-blur = cv2.blur(gray,(3,3))
+blur = cv2.blur(gray, (3, 3))
 
 # Apply logarithmic transform
-img_log = (np.log(blur+1)/(np.log(1+np.max(blur))))*255
+img_log = (np.log(blur + 1) / (np.log(1 + np.max(blur)))) * 255
 
 # Specify the data type
-img_log = np.array(img_log,dtype=np.uint8)
+img_log = np.array(img_log, dtype=np.uint8)
 
 # Image smoothing: bilateral filter
 bilateral = cv2.bilateralFilter(img_log, 5, 75, 75)
 
 # Canny Edge Detection
-edges = cv2.Canny(bilateral,100,200)
+edges = cv2.Canny(bilateral, 100, 200)
 
 # Morphological Closing Operator
-kernel = np.ones((5,5),np.uint8)
+kernel = np.ones((5, 5), np.uint8)
 closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
 
 # Create feature detecting method
@@ -45,8 +45,8 @@ cv2.waitKey()
 # Create an output image
 cv2.imwrite('CrackDetected-7.jpg', featuredImg)
 # Use plot to show original and output image
-plt.subplot(211),plt.imshow(img)
-plt.title('Original'),plt.xticks([]), plt.yticks([])
-plt.subplot(212),plt.imshow(featuredImg,cmap='gray')
-plt.title('Output Image'),plt.xticks([]), plt.yticks([])
+plt.subplot(211), plt.imshow(img)
+plt.title('Original'), plt.xticks([]), plt.yticks([])
+plt.subplot(212), plt.imshow(featuredImg, cmap='gray')
+plt.title('Output Image'), plt.xticks([]), plt.yticks([])
 plt.show()
