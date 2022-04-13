@@ -5,7 +5,7 @@ import imutils
 import cv2
 import numpy as np
 
-im = cv2.imread('Untitled1.bmp')
+
 frame = cv2.imread('Image_20220128121045551.bmp')
 
 frame = imutils.resize(frame, width=1024)
