@@ -17,9 +17,10 @@ grade = ""
 # image processing for wood defect detection system
 
 # 1. image preprocessing???
+# transform to grayscale
+# transformation techniques
 
-
-# 2. size detection
+# 2. size detection???
 
 
 # 3. dead knot detection / small knots detection
@@ -43,9 +44,9 @@ mymodule.knotDetection(frame3)
 # defect detection logic
 
 if size > 100:  # set the minimum size
-    if has_dead_knot or has_cracks or holes > 100:  # set the minimum number of holes
+    if has_dead_knot or has_cracks or holes > 3:  # set the minimum number of holes
         grade = "Grade C"
-    elif has_small_knots or holes <= 100:
+    elif has_small_knots or holes <= 3:
         grade = "Grade B"
     else:
         grade = "Grade A"
