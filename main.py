@@ -2,6 +2,7 @@ import cv2
 import numpy
 from importlib.machinery import SourceFileLoader
 
+image = ""
 
 # to store the data of the wood
 size = 0
