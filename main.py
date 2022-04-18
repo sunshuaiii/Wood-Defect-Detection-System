@@ -39,7 +39,40 @@ mymodule.knotDetection(frame3)
 
 
 # 5. holes / pin detection
+img = cv2.imread('pinhole.bmp')
+# im = cv2.imread('Image_20220128121045551.bmp')
 
+# resize the image first
+def rescaleFrame(frame, scale = 0.35):
+    width = int(frame.shape[1] * scale)
+    height = int(frame.shape[0] * scale)
+    dimensions = (width,height)
+    
+    return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
+
+image_resized = rescaleFrame(img)
+
+def pinhole(image_resized):
+    gray=cv2.cvtColor(image_resized,cv2.COLOR_BGR2GRAY)
+    gray=cv2.threshold(gray,40,255,cv2.THRESH_BINARY)[1]
+    cv2.imshow('gray',255-gray)
+
+    contours,hierarchy = cv2.findContours(gray,cv2.RETR_LIST ,cv2.CHAIN_APPROX_SIMPLE)
+    print(len(contours))
+    counter = 0
+
+    for cnt in contours:
+        counter += 1
+        area = cv2.contourArea(cnt)
+    (x, y, w, h) = cv2.boundingRect(cnt)
+    if area < 300:
+        cv2.drawContours(image_resized,[cnt],0,(255,0,0),2)
+        cv2.rectangle(image_resized, (x-5, y-5), (x+w+5, y+h+5), (0, 0, 255), 2)
+        cv2.putText(image_resized, str(counter), (x-5, y-5), cv2.FONT_HERSHEY_SIMPLEX,1, (255, 255, 255), 2)
+    
+
+cv2.imshow('im',image_resized)
+cv2.waitKey()
 
 # defect detection logic
 
