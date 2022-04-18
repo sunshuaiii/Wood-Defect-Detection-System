@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 
-im = cv2.imread('Untitled1.bmp')
+im = cv2.imread('imageInput/Untitled1.bmp')
 # im = cv2.imread('Image_20220128121045551.bmp')
 
 def pinholeDetection (im) :
