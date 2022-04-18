@@ -50,5 +50,6 @@ if size > 100:  # set the minimum size
         grade = "Grade B"
     else:
         grade = "Grade A"
+    print(grade)
 else:
     print("Need to resize the wood")
