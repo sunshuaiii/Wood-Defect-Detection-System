@@ -4,7 +4,7 @@ import cv2
 from matplotlib import pyplot as plt
 
 # read a cracked sample image
-img = cv2.imread('crack.bmp')
+img = cv2.imread('imageInput/crack.bmp')
 
 # Convert into gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -43,7 +43,7 @@ cv2.imshow('Output', featuredImg)
 cv2.waitKey()
 
 # Create an output image
-cv2.imwrite('CrackDetected-7.jpg', featuredImg)
+cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
 # Use plot to show original and output image
 plt.subplot(211), plt.imshow(img)
 plt.title('Original'), plt.xticks([]), plt.yticks([])
