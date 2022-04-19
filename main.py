@@ -177,4 +177,4 @@ if size < 100:  # set the minimum size
     print(grade)
 else:
     print("Need to resize the wood")
-print(grade)
+
