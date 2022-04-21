@@ -19,41 +19,36 @@ def dead_knot(frame):
     dilated = cv2.dilate(thresh, None, iterations=1)
 
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    knot_number = 0
 
-    if len(contours) < 1:
+    for contour in contours:
+        (x, y, w, h) = cv2.boundingRect(contour)
+        if cv2.contourArea(contour) < 800:
+            continue
+        knot_number = knot_number + 1
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.putText(frame, "Status: {}".format('Dead Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+
+    res1 = cv2.bitwise_and(frame, frame, mask=mask)
+    res2 = cv2.bitwise_not(res1)
+
+    # mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
+    # Hori = np.concatenate((frame, mask_rgb, res2), axis=1)
+
+    # Display Results
+    cv2.imshow('frame', frame)
+    cv2.imshow('mask', mask)
+    cv2.imshow('res', res2)
+    cv2.waitKey()
+
+    cv2.destroyAllWindows()
+
+    if knot_number == 0:
         print("No dead knot")
         return False
     else:
-        print("Has dead knot")
-        for contour in contours:
-            (x, y, w, h) = cv2.boundingRect(contour)
-            if cv2.contourArea(contour) < 800:
-                continue
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-            cv2.putText(frame, "Status: {}".format('Dead Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0),
-                        2)
-
-            res1 = cv2.bitwise_and(frame, frame, mask=mask)
-            res2 = cv2.bitwise_not(res1)
-
-            # mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
-            # Hori = np.concatenate((frame,mask_rgb,res2 ), axis=1)
-
-            # Verti1 = np.concatenate((frame,mask_rgb,res2 ), axis=0)
-            # Verti2 = np.concatenate((mask_rgb, res1), axis=0)
-            # Hori = np.concatenate((Verti1, Verti2), axis=1)
-
-            # Display Results
-            cv2.imshow('frame', frame)
-            cv2.imshow('mask', mask)
-            cv2.imshow('res', res2)
-            # cv2.imshow('VERTICAL', Verti1)
-            # cv2.imshow('Hori', Hori)
-            # cv2.imshow('Hori', Hori)
-            cv2.waitKey()
-
-            # cv2.destroyAllWindows()
-            return True
+        print("Dead knots: ", knot_number)
+        return True
 
 
 # return true if has small knots
@@ -72,41 +67,36 @@ def small_knot(frame):
     dilated = cv2.dilate(thresh, None, iterations=1)
 
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    knot_number = 0
 
-    if len(contours) < 1:
+    for contour in contours:
+        (x, y, w, h) = cv2.boundingRect(contour)
+        if cv2.contourArea(contour) < 800:
+            continue
+        knot_number = knot_number + 1
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        cv2.putText(frame, "Status: {}".format('Small Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+
+    res1 = cv2.bitwise_and(frame, frame, mask=mask)
+    res2 = cv2.bitwise_not(res1)
+
+    # mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
+    # Hori = np.concatenate((frame, mask_rgb, res2), axis=1)
+
+    # Display Results
+    cv2.imshow('frame', frame)
+    cv2.imshow('mask', mask)
+    cv2.imshow('res', res2)
+    cv2.waitKey()
+
+    cv2.destroyAllWindows()
+
+    if knot_number == 0:
         print("No small knot")
         return False
     else:
-        print("Has small knots")
-        for contour in contours:
-            (x, y, w, h) = cv2.boundingRect(contour)
-            if cv2.contourArea(contour) < 800:
-                continue
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-            cv2.putText(frame, "Status: {}".format('Small Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0),
-                        2)
-
-            res1 = cv2.bitwise_and(frame, frame, mask=mask)
-            res2 = cv2.bitwise_not(res1)
-
-            # mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
-            # Hori = np.concatenate((frame,mask_rgb,res2 ), axis=1)
-
-            # Verti1 = np.concatenate((frame,mask_rgb,res2 ), axis=0)
-            # Verti2 = np.concatenate((mask_rgb, res1), axis=0)
-            # Hori = np.concatenate((Verti1, Verti2), axis=1)
-
-            # Display Results
-            cv2.imshow('frame', frame)
-            cv2.imshow('mask', mask)
-            cv2.imshow('res', res2)
-            # cv2.imshow('VERTICAL', Verti1)
-            # cv2.imshow('Hori', Hori)
-            # cv2.imshow('Hori', Hori)
-            cv2.waitKey()
-
-            cv2.destroyAllWindows()
-            return True
+        print("Small knots: ", knot_number)
+        return True
 
 
 def crack(img):
@@ -195,8 +185,8 @@ def pinhole(frame):
         return holes
 
 
-def main():
-    image_path = 'imageInput/undersized/4.bmp'
+def wood_defect_detection_system():
+    image_path = 'imageInput/knot/1.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -236,4 +226,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    wood_defect_detection_system()
