@@ -158,7 +158,7 @@ def pinhole(frame):
     print("\nDetecting pinhole...")
     img1 = frame.copy()
     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    gray = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY)[1]
+    gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)[1]
     cv2.imshow('gray', imutils.resize(255 - gray, width=1024))
 
     holes, hierarchy = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
@@ -178,11 +178,11 @@ def pinhole(frame):
     cv2.waitKey()
 
     cv2.destroyAllWindows()
-    return holes
+    return len(holes)
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/crack/3.bmp'
+    image_path = 'imageInput/pinhole/5.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -205,7 +205,6 @@ def wood_defect_detection_system():
         if has_dead_knot:
             grade = "C"
             print("\n\nGrade of the wood: " + grade)
-            return
 
         # 4. crack detection
         # read a cracked sample image
@@ -220,9 +219,9 @@ def wood_defect_detection_system():
 
         # defect detection logic
 
-        if holes > 1500:  # set the minimum number of holes
+        if holes > 100:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes <= 1500:
+        elif has_small_knots or holes <= 100:
             grade = "B"
         else:
             grade = "A"
