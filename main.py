@@ -132,6 +132,7 @@ def crack(img):
     cv2.imshow("img_log", imutils.resize(img_log, width=1024))
     cv2.imshow('Output', imutils.resize(featuredImg, width=1024))
     cv2.waitKey()
+    cv2.destroyAllWindows()
 
     # Create an output image
     # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
@@ -181,7 +182,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/knot/3.bmp'
+    image_path = 'imageInput/crack/3.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -201,19 +202,27 @@ def wood_defect_detection_system():
         # 3. dead knot detection / small knots detection
         has_dead_knot = dead_knot(frame)
         has_small_knots = small_knot(frame)
+        if has_dead_knot:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
 
         # 4. crack detection
         # read a cracked sample image
         has_cracks = crack(frame)
+        if has_cracks:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
 
         # 5. pinhole detection
         holes = pinhole(frame)
 
         # defect detection logic
 
-        if has_dead_knot or has_cracks or holes > 3:  # set the minimum number of holes
+        if holes > 1500:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes <= 3:
+        elif has_small_knots or holes <= 1500:
             grade = "B"
         else:
             grade = "A"
