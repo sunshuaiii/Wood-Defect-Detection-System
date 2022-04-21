@@ -11,7 +11,7 @@ def dead_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([99, 255, 100])
+    upper_red = np.array([110, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -23,7 +23,7 @@ def dead_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 800:
+        if cv2.contourArea(contour) < 3000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -56,7 +56,7 @@ def small_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([70, 255, 100])
+    upper_red = np.array([30, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
