@@ -2,6 +2,7 @@
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import imutils
 
 # read a cracked sample image
 img = cv2.imread('imageInput/crack.bmp')
@@ -38,8 +39,9 @@ orb = cv2.ORB_create(nfeatures=1500)
 keypoints, descriptors = orb.detectAndCompute(closing, None)
 featuredImg = cv2.drawKeypoints(closing, keypoints, None)
 
-cv2.imshow('Original', img)
-cv2.imshow('Output', featuredImg)
+cv2.imshow('Original', imutils.resize(img, width=1024))
+cv2.imshow("img_log", imutils.resize(img_log, width=1024))
+cv2.imshow('Output', imutils.resize(featuredImg, width=1024))
 cv2.waitKey()
 
 # Create an output image
