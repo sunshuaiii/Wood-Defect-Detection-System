@@ -6,6 +6,15 @@ im = cv2.imread('imageInput/Untitled1.bmp')
 
 # im = cv2.imread('Image_20220128121045551.bmp')
 
+# rescale the frame
+def rescale_frame(frame, scale=0.35):
+    width = int(frame.shape[1] * scale)
+    height = int(frame.shape[0] * scale)
+    dimensions = (width, height)
+
+    return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
+
+
 def pinholeDetection(im):
     gray = cv2.cvtColor(im, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY)[1]

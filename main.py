@@ -6,6 +6,7 @@ import imutils
 
 # return true if has dead knot
 def dead_knot(frame):
+    print("Detecting dead knot...")
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
@@ -20,8 +21,10 @@ def dead_knot(frame):
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     if len(contours) < 1:
+        print("No dead knot")
         return False
     else:
+        print("Has dead knot")
         for contour in contours:
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < 800:
@@ -49,12 +52,13 @@ def dead_knot(frame):
             # cv2.imshow('Hori', Hori)
             cv2.waitKey()
 
-            cv2.destroyAllWindows()
+            # cv2.destroyAllWindows()
             return True
 
 
 # return true if has small knots
 def small_knot(frame):
+    print("Detecting small knots...")
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -70,8 +74,10 @@ def small_knot(frame):
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
     if len(contours) < 1:
+        print("No small knot")
         return False
     else:
+        print("Has small knots")
         for contour in contours:
             (x, y, w, h) = cv2.boundingRect(contour)
             if cv2.contourArea(contour) < 800:
@@ -101,10 +107,10 @@ def small_knot(frame):
 
             cv2.destroyAllWindows()
             return True
-    # if contours
 
 
 def crack(img):
+    print("Detecting cracks...")
     # Convert into gray scale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
@@ -143,7 +149,7 @@ def crack(img):
     cv2.waitKey()
 
     # Create an output image
-    cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
+    # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
     # Use plot to show original and output image
     plt.subplot(211), plt.imshow(img)
     plt.title('Original'), plt.xticks([]), plt.yticks([])
@@ -161,24 +167,16 @@ def crack(img):
         return True
 
 
-# rescale the frame
-def rescale_frame(frame, scale=0.35):
-    width = int(frame.shape[1] * scale)
-    height = int(frame.shape[0] * scale)
-    dimensions = (width, height)
-
-    return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
-
-
 # return number of holes in the wood
-def pinhole(image_resized):
-    img1 = image_resized.copy()
+def pinhole(frame):
+    print("Detecting pinhole...")
+    img1 = frame.copy()
     gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY)[1]
-    cv2.imshow('gray', 255 - gray)
+    cv2.imshow('gray', imutils.resize(255 - gray, width=1024))
 
     holes, hierarchy = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    print("number of holes:", len(holes))
+    print("Number of holes:", len(holes))
     counter = 0
 
     for cnt in holes:
@@ -186,25 +184,21 @@ def pinhole(image_resized):
         area = cv2.contourArea(cnt)
         (x, y, w, h) = cv2.boundingRect(cnt)
         if area < 300:
-            cv2.drawContours(image_resized, [cnt], 0, (255, 0, 0), 2)
+            cv2.drawContours(frame, [cnt], 0, (255, 0, 0), 2)
             cv2.rectangle(img1, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
             cv2.putText(img1, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-        cv2.imshow('im', image_resized)
+        cv2.imshow('im', imutils.resize(frame, width=1024))
         cv2.waitKey()
 
-    cv2.destroyAllWindows()
-    return holes
+        cv2.destroyAllWindows()
+        return holes
 
 
 def main():
-    frame = cv2.imread('imageInput/knot4.bmp')
-
-    # to store the data of the wood
-    size = 0
-    has_cracks = False
-
-    grade = ""
+    image_path = 'imageInput/undersized/4.bmp'
+    frame = cv2.imread(image_path)
+    print("Reading image from " + image_path)
 
     # image processing for wood defect detection system
 
@@ -212,29 +206,26 @@ def main():
     # transform to grayscale
     # transformation techniques
 
-    # 2. size detection???
+    # 2. size detection
+    minimum_size = 3200
 
-    # 3. dead knot detection / small knots detection
-    has_dead_knot = dead_knot(frame)
-    has_small_knots = small_knot(frame)
+    if frame.shape[1] < minimum_size:
+        print("The wood is undersized.")
+        return
+    else:
+        # 3. dead knot detection / small knots detection
+        has_dead_knot = dead_knot(frame)
+        has_small_knots = small_knot(frame)
 
-    # 4. crack detection
-    # read a cracked sample image
-    img = cv2.imread('imageInput/crack.bmp')
-    has_cracks = crack(img)
+        # 4. crack detection
+        # read a cracked sample image
+        has_cracks = crack(frame)
 
-    # 5. pinhole detection
-    img = cv2.imread('imageInput/Untitled.bmp')
-    # img = cv2.imread('Image_20220128121045551.bmp')
+        # 5. pinhole detection
+        holes = pinhole(frame)
 
-    # resize the image first
-    # image_resized = rescale_frame(img)
-    img = imutils.resize(img, width=1024)
+        # defect detection logic
 
-    # defect detection logic
-    holes = pinhole(img)
-
-    if size < 100:  # set the minimum size
         if has_dead_knot or has_cracks or holes > 3:  # set the minimum number of holes
             grade = "C"
         elif has_small_knots or holes <= 3:
@@ -242,8 +233,6 @@ def main():
         else:
             grade = "A"
         print("Grade of the wood: " + grade)
-    else:
-        print("Need to resize the wood")
 
 
 if __name__ == "__main__":
