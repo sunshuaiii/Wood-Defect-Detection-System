@@ -4,8 +4,10 @@ from matplotlib import pyplot as plt
 import imutils
 
 
-# todo use plt to show the original image and result
+# todo: use plt to show the original image and result
 
+
+# todo: dark color wood will detect dead knots for imageInput/crack/4-6.bmp - second priority
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
@@ -13,7 +15,7 @@ def dead_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([99, 255, 100])
+    upper_red = np.array([89, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -50,6 +52,8 @@ def dead_knot(frame):
         return True
 
 
+# todo: dark color wood will detect small knot for imageInput/crack/7.bmp,
+#  imageInput/pinhole/4.bmp,imageInput/knot/3.bmp - second priority
 # return true if has small knots
 def small_knot(frame):
     print("\nDetecting small knots...")
@@ -58,7 +62,7 @@ def small_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([99, 255, 100])
+    upper_red = np.array([89, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -95,6 +99,7 @@ def small_knot(frame):
         return True
 
 
+# todo: will detect some holes - high priority
 def crack(img):
     print("\nDetecting cracks...")
     # Convert into gray scale
@@ -156,14 +161,14 @@ def crack(img):
         return True
 
 
-# todo
+# todo: not to detect some holes - solved by increasing minimum holes
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
 
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)[1]
-    cv2.imshow('gray', imutils.resize(255 - gray, width=1024))
+    gray = 255 - gray
 
     holes, hierarchy = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     print("Number of holes:", len(holes))
@@ -186,7 +191,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/knot/2.bmp'
+    image_path = 'imageInput/crack/4.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -197,9 +202,9 @@ def wood_defect_detection_system():
     # transformation techniques
 
     # 2. size detection
-    minimum_size = 3200
+    minimum_width = 3200
 
-    if frame.shape[1] < minimum_size:
+    if frame.shape[1] < minimum_width:
         print("The wood is undersized.")
         return
     else:
@@ -224,9 +229,9 @@ def wood_defect_detection_system():
 
         # defect detection logic
 
-        if holes > 50:  # set the minimum number of holes
+        if holes > 35:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes <= 50:
+        elif has_small_knots or holes > 4:
             grade = "B"
         else:
             grade = "A"
