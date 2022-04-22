@@ -9,9 +9,10 @@ def dead_knot(frame):
     print("\nDetecting dead knot...")
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    cv2.imshow("hsv", hsv)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([110, 255, 100])
+    upper_red = np.array([70, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -54,9 +55,10 @@ def small_knot(frame):
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    hsv = hsv+50
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([30, 255, 100])
+    upper_red = np.array([10, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -97,6 +99,7 @@ def crack(img):
     print("\nDetecting cracks...")
     # Convert into gray scale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = gray / 2
 
     # Image processing ( smoothing )
     # Averaging
@@ -156,8 +159,8 @@ def crack(img):
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
-    img1 = frame.copy()
-    gray = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)[1]
     cv2.imshow('gray', imutils.resize(255 - gray, width=1024))
 
@@ -166,23 +169,23 @@ def pinhole(frame):
     counter = 0
 
     for cnt in holes:
-        counter += 1
         area = cv2.contourArea(cnt)
         (x, y, w, h) = cv2.boundingRect(cnt)
         if area < 300:
+            counter += 1
             cv2.drawContours(frame, [cnt], 0, (255, 0, 0), 2)
-            cv2.rectangle(img1, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
-            cv2.putText(img1, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+            cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
+            cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     cv2.imshow('im', imutils.resize(frame, width=1024))
     cv2.waitKey()
 
     cv2.destroyAllWindows()
-    return len(holes)
+    return counter
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/pinhole/5.bmp'
+    image_path = 'imageInput/crack/2.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -205,6 +208,7 @@ def wood_defect_detection_system():
         if has_dead_knot:
             grade = "C"
             print("\n\nGrade of the wood: " + grade)
+            return
 
         # 4. crack detection
         # read a cracked sample image
@@ -219,9 +223,9 @@ def wood_defect_detection_system():
 
         # defect detection logic
 
-        if holes > 100:  # set the minimum number of holes
+        if holes > 50:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes <= 100:
+        elif has_small_knots or holes <= 50:
             grade = "B"
         else:
             grade = "A"

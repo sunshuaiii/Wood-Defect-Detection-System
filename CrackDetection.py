@@ -4,11 +4,20 @@ import cv2
 from matplotlib import pyplot as plt
 import imutils
 
+# 1 not good
+# 2 good
+# 3 not good
+# 4 is cracked
+# 5 is cracked - not good
+# 6 is cracked
+# 7 is cracked
+
 # read a cracked sample image
-img = cv2.imread('imageInput/crack.bmp')
+img = cv2.imread('imageInput/crack/1.bmp')
 
 # Convert into gray scale
 gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+gray = gray/2
 
 # Image processing ( smoothing )
 # Averaging
@@ -51,4 +60,4 @@ plt.subplot(211), plt.imshow(img)
 plt.title('Original'), plt.xticks([]), plt.yticks([])
 plt.subplot(212), plt.imshow(featuredImg, cmap='gray')
 plt.title('Output Image'), plt.xticks([]), plt.yticks([])
-plt.show()
+# plt.show()
