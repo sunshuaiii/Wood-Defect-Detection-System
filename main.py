@@ -99,7 +99,7 @@ def small_knot(frame):
         return True
 
 
-# todo: will detect some holes - high priority
+# todo: will detect some holes in imageInput/pinhole/1-6.bmp - high priority
 def crack(img):
     print("\nDetecting cracks...")
     # Convert into gray scale
@@ -133,25 +133,25 @@ def crack(img):
     orb = cv2.ORB_create(nfeatures=1500)
 
     # Make featured Image
-    keypoints, descriptors = orb.detectAndCompute(closing, None)
-    featuredImg = cv2.drawKeypoints(closing, keypoints, None)
+    key_points, descriptors = orb.detectAndCompute(closing, None)
+    featured_img = cv2.drawKeypoints(closing, key_points, None)
 
     cv2.imshow('Original - Crack', imutils.resize(img, width=1024))
     cv2.imshow("img_log", imutils.resize(img_log, width=1024))
-    cv2.imshow('Output', imutils.resize(featuredImg, width=1024))
+    cv2.imshow('Output', imutils.resize(featured_img, width=1024))
     cv2.waitKey()
     cv2.destroyAllWindows()
 
     # Create an output image
-    # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
+    # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featured_img)
     # Use plot to show original and output image
     # plt.subplot(211), plt.imshow(img)
     # plt.title('Original'), plt.xticks([]), plt.yticks([])
-    # plt.subplot(212), plt.imshow(featuredImg, cmap='gray')
+    # plt.subplot(212), plt.imshow(featured_img, cmap='gray')
     # plt.title('Output Image'), plt.xticks([]), plt.yticks([])
     # plt.show()
 
-    gray = cv2.cvtColor(featuredImg, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(featured_img, cv2.COLOR_BGR2GRAY)
 
     if cv2.countNonZero(gray) == 0:
         print("No crack")
