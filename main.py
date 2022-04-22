@@ -12,7 +12,7 @@ import imutils
 def dead_knot(frame):
     print("\nDetecting dead knot...")
     frame = imutils.resize(frame, width=1024)
-    frame = frame + 20
+    # frame = frame + 20
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
@@ -60,7 +60,7 @@ def small_knot(frame):
     print("\nDetecting small knots...")
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
-    frame = frame + 20
+    # frame = frame + 20
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
@@ -191,7 +191,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/crack/2.bmp'
+    image_path = 'imageInput/crack/3.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
