@@ -4,12 +4,13 @@ from matplotlib import pyplot as plt
 import imutils
 
 
+# todo use plt to show the original image and result
+
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    cv2.imshow("hsv", hsv)
 
     lower_red = np.array([0, 0, 0])
     upper_red = np.array([70, 255, 100])
@@ -34,7 +35,7 @@ def dead_knot(frame):
     res2 = cv2.bitwise_not(res1)
 
     # Display Results
-    cv2.imshow('frame', frame)
+    cv2.imshow('Original - Dead Knot', frame)
     cv2.imshow('mask', mask)
     cv2.imshow('res', res2)
     cv2.waitKey()
@@ -55,7 +56,6 @@ def small_knot(frame):
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    hsv = hsv+50
 
     lower_red = np.array([0, 0, 0])
     upper_red = np.array([10, 255, 100])
@@ -80,7 +80,7 @@ def small_knot(frame):
     res2 = cv2.bitwise_not(res1)
 
     # Display Results
-    cv2.imshow('frame', frame)
+    cv2.imshow('Original - Small Knot', frame)
     cv2.imshow('mask', mask)
     cv2.imshow('res', res2)
     cv2.waitKey()
@@ -131,7 +131,7 @@ def crack(img):
     keypoints, descriptors = orb.detectAndCompute(closing, None)
     featuredImg = cv2.drawKeypoints(closing, keypoints, None)
 
-    cv2.imshow('Original', imutils.resize(img, width=1024))
+    cv2.imshow('Original - Crack', imutils.resize(img, width=1024))
     cv2.imshow("img_log", imutils.resize(img_log, width=1024))
     cv2.imshow('Output', imutils.resize(featuredImg, width=1024))
     cv2.waitKey()
@@ -140,11 +140,11 @@ def crack(img):
     # Create an output image
     # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featuredImg)
     # Use plot to show original and output image
-    plt.subplot(211), plt.imshow(img)
-    plt.title('Original'), plt.xticks([]), plt.yticks([])
-    plt.subplot(212), plt.imshow(featuredImg, cmap='gray')
-    plt.title('Output Image'), plt.xticks([]), plt.yticks([])
-    plt.show()
+    # plt.subplot(211), plt.imshow(img)
+    # plt.title('Original'), plt.xticks([]), plt.yticks([])
+    # plt.subplot(212), plt.imshow(featuredImg, cmap='gray')
+    # plt.title('Output Image'), plt.xticks([]), plt.yticks([])
+    # plt.show()
 
     gray = cv2.cvtColor(featuredImg, cv2.COLOR_BGR2GRAY)
 
@@ -156,6 +156,7 @@ def crack(img):
         return True
 
 
+# todo
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
@@ -177,7 +178,7 @@ def pinhole(frame):
             cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
             cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-    cv2.imshow('im', imutils.resize(frame, width=1024))
+    cv2.imshow('pinhole', imutils.resize(frame, width=1024))
     cv2.waitKey()
 
     cv2.destroyAllWindows()
