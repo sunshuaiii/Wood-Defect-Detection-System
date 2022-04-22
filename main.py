@@ -227,12 +227,12 @@ def wood_defect_detection_system():
         # defect detection logic
 
         # holes > 55: many holes - Grade C
-        # holes 5-55: less holes - Grade B
-        # holes <= 4: no holes - Grade A
+        # holes 6-55: less holes - Grade B
+        # holes <= 5: no holes - Grade A
 
         if holes > 55:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes > 4:
+        elif has_small_knots or holes > 5:
             grade = "B"
         else:
             grade = "A"
