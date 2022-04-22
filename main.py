@@ -29,7 +29,7 @@ def dead_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 3000:
+        if cv2.contourArea(contour) < 50000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -193,7 +193,7 @@ def pinhole(frame):
 
 # todo: change to elif
 def wood_defect_detection_system():
-    image_path = 'imageInput/pinhole/1.bmp'
+    image_path = 'imageInput/knot/3.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
