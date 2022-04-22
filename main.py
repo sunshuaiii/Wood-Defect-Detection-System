@@ -104,11 +104,11 @@ def crack(img):
     print("\nDetecting cracks...")
     # Convert into gray scale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = gray / 2
+    gray = gray - 20
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray, (3, 3))
+    blur = cv2.blur(gray, (5, 5))
 
     # Apply logarithmic transform
     np.seterr(divide='ignore')
@@ -191,7 +191,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/crack/4.bmp'
+    image_path = 'imageInput/pinhole/1.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -208,13 +208,13 @@ def wood_defect_detection_system():
         print("The wood is undersized.")
         return
     else:
-        # 3. dead knot detection / small knots detection
-        has_dead_knot = dead_knot(frame)
-        has_small_knots = small_knot(frame)
-        if has_dead_knot:
-            grade = "C"
-            print("\n\nGrade of the wood: " + grade)
-            return
+        # # 3. dead knot detection / small knots detection
+        # has_dead_knot = dead_knot(frame)
+        # has_small_knots = small_knot(frame)
+        # if has_dead_knot:
+        #     grade = "C"
+        #     print("\n\nGrade of the wood: " + grade)
+        #     return
 
         # 4. crack detection
         # read a cracked sample image
@@ -224,18 +224,18 @@ def wood_defect_detection_system():
             print("\n\nGrade of the wood: " + grade)
             return
 
-        # 5. pinhole detection
-        holes = pinhole(frame)
-
-        # defect detection logic
-
-        if holes > 35:  # set the minimum number of holes
-            grade = "C"
-        elif has_small_knots or holes > 4:
-            grade = "B"
-        else:
-            grade = "A"
-        print("\n\nGrade of the wood: " + grade)
+        # # 5. pinhole detection
+        # holes = pinhole(frame)
+        #
+        # # defect detection logic
+        #
+        # if holes > 55:  # set the minimum number of holes
+        #     grade = "C"
+        # elif has_small_knots or holes > 4:
+        #     grade = "B"
+        # else:
+        #     grade = "A"
+        # print("\n\nGrade of the wood: " + grade)
 
 
 if __name__ == "__main__":
