@@ -3,8 +3,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import imutils
 
-
-# todo: use plt to show the original image and result
+# todo: how to detect the darker woods?
+# todo: do we need specific values for each detection?
+# todo: do we need to use plt to show the original image and result?
 
 
 # todo: dark color wood will detect dead knots for imageInput/crack/4-6.bmp - first priority
@@ -16,7 +17,7 @@ def dead_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([89, 255, 100])
+    upper_red = np.array([99, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -64,7 +65,7 @@ def small_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([89, 255, 100])
+    upper_red = np.array([99, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -190,8 +191,9 @@ def pinhole(frame):
     return counter
 
 
+# todo: change to elif
 def wood_defect_detection_system():
-    image_path = 'imageInput/crack/3.bmp'
+    image_path = 'imageInput/pinhole/1.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -210,7 +212,7 @@ def wood_defect_detection_system():
     else:
         # 3. dead knot detection / small knots detection
         has_dead_knot = dead_knot(frame)
-        has_small_knots = small_knot(frame)
+
         if has_dead_knot:
             grade = "C"
             print("\n\nGrade of the wood: " + grade)
@@ -229,12 +231,14 @@ def wood_defect_detection_system():
         # defect detection logic
 
         # holes > 55: many holes - Grade C
-        # holes 6-55: less holes - Grade B
-        # holes <= 5: no holes - Grade A
+        # holes 1-55: less holes - Grade B
+        # holes = 0: no holes - Grade A
+
+        has_small_knots = small_knot(frame)
 
         if holes > 55:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes > 5:
+        elif has_small_knots or holes > 0:
             grade = "B"
         else:
             grade = "A"
