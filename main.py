@@ -7,7 +7,7 @@ import imutils
 # todo: use plt to show the original image and result
 
 
-# todo: dark color wood will detect dead knots for imageInput/crack/4-6.bmp - second priority
+# todo: dark color wood will detect dead knots for imageInput/crack/4-6.bmp - first priority
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
@@ -53,7 +53,7 @@ def dead_knot(frame):
 
 
 # todo: dark color wood will detect small knot for imageInput/crack/7.bmp,
-#  imageInput/pinhole/4.bmp,imageInput/knot/3.bmp - second priority
+#  imageInput/pinhole/4.bmp,imageInput/knot/3.bmp - first priority
 # return true if has small knots
 def small_knot(frame):
     print("\nDetecting small knots...")
@@ -99,12 +99,11 @@ def small_knot(frame):
         return True
 
 
-# todo: will detect some holes in imageInput/pinhole/1-6.bmp - high priority
 def crack(img):
     print("\nDetecting cracks...")
     # Convert into gray scale
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = gray - 20
+    gray = gray - 15
 
     # Image processing ( smoothing )
     # Averaging
@@ -153,7 +152,7 @@ def crack(img):
 
     gray = cv2.cvtColor(featured_img, cv2.COLOR_BGR2GRAY)
 
-    if cv2.countNonZero(gray) == 0:
+    if cv2.countNonZero(gray) <= 1500:
         print("No crack")
         return False
     else:
@@ -161,7 +160,6 @@ def crack(img):
         return True
 
 
-# todo: not to detect some holes - solved by increasing minimum holes
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
@@ -191,7 +189,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/pinhole/1.bmp'
+    image_path = 'imageInput/crack/4.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -208,34 +206,37 @@ def wood_defect_detection_system():
         print("The wood is undersized.")
         return
     else:
-        # # 3. dead knot detection / small knots detection
-        # has_dead_knot = dead_knot(frame)
-        # has_small_knots = small_knot(frame)
-        # if has_dead_knot:
-        #     grade = "C"
-        #     print("\n\nGrade of the wood: " + grade)
-        #     return
+        # 3. dead knot detection / small knots detection
+        has_dead_knot = dead_knot(frame)
+        has_small_knots = small_knot(frame)
+        if has_dead_knot:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
 
         # 4. crack detection
-        # read a cracked sample image
         has_cracks = crack(frame)
         if has_cracks:
             grade = "C"
             print("\n\nGrade of the wood: " + grade)
             return
 
-        # # 5. pinhole detection
-        # holes = pinhole(frame)
-        #
-        # # defect detection logic
-        #
-        # if holes > 55:  # set the minimum number of holes
-        #     grade = "C"
-        # elif has_small_knots or holes > 4:
-        #     grade = "B"
-        # else:
-        #     grade = "A"
-        # print("\n\nGrade of the wood: " + grade)
+        # 5. pinhole detection
+        holes = pinhole(frame)
+
+        # defect detection logic
+
+        # holes > 55: many holes - Grade C
+        # holes 5-55: less holes - Grade B
+        # holes <= 4: no holes - Grade A
+
+        if holes > 55:  # set the minimum number of holes
+            grade = "C"
+        elif has_small_knots or holes > 4:
+            grade = "B"
+        else:
+            grade = "A"
+        print("\n\nGrade of the wood: " + grade)
 
 
 if __name__ == "__main__":
