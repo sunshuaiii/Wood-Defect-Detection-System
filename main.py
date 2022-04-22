@@ -77,7 +77,7 @@ def small_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 800 or cv2.contourArea(contour) > 3000:
+        if cv2.contourArea(contour) < 800 or cv2.contourArea(contour) > 7000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -193,7 +193,7 @@ def pinhole(frame):
 
 # todo: change to elif
 def wood_defect_detection_system():
-    image_path = 'imageInput/knot/3.bmp'
+    image_path = 'imageInput/knot/2.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
@@ -220,10 +220,10 @@ def wood_defect_detection_system():
 
         # 4. crack detection
         has_cracks = crack(frame)
-        if has_cracks:
-            grade = "C"
-            print("\n\nGrade of the wood: " + grade)
-            return
+        # if has_cracks:
+        #     grade = "C"
+        #     print("\n\nGrade of the wood: " + grade)
+        #     return
 
         # 5. pinhole detection
         holes = pinhole(frame)
