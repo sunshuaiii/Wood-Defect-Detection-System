@@ -13,7 +13,7 @@ def dead_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([70, 255, 100])
+    upper_red = np.array([99, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -58,7 +58,7 @@ def small_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([70, 255, 100])
+    upper_red = np.array([99, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -186,7 +186,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/knot/1.bmp'
+    image_path = 'imageInput/knot/2.bmp'
     frame = cv2.imread(image_path)
     print("Reading image from " + image_path)
 
