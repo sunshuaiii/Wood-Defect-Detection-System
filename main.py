@@ -188,12 +188,14 @@ def pinhole(frame):
     cv2.waitKey()
 
     cv2.destroyAllWindows()
-    print("Number of holes:", counter)
+    print("Number of pinholes:", counter)
     return counter
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/crack/2.bmp'
+    # change the image_path to detect various defect types of woods
+
+    image_path = 'imageInput/pinhole/1.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
