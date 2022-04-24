@@ -3,17 +3,14 @@ import numpy as np
 from matplotlib import pyplot as plt
 import imutils
 
+
 # todo: how to detect the darker woods?
-# todo: do we need specific values for each detection?
-# todo: do we need to use plt to show the original image and result?
 
 
-# todo: dark color wood will detect dead knots for imageInput/crack/4-6.bmp - first priority
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
     frame = imutils.resize(frame, width=1024)
-    # frame = frame + 20
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
@@ -54,8 +51,6 @@ def dead_knot(frame):
         return True
 
 
-# todo: dark color wood will detect small knot for imageInput/crack/7.bmp,
-#  imageInput/pinhole/4.bmp,imageInput/knot/3.bmp - first priority
 # return true if has small knots
 def small_knot(frame):
     print("\nDetecting small knots...")
@@ -144,15 +139,6 @@ def crack(img):
     cv2.waitKey()
     cv2.destroyAllWindows()
 
-    # Create an output image
-    # cv2.imwrite('imageOutput/CrackDetected-7.jpg', featured_img)
-    # Use plot to show original and output image
-    # plt.subplot(211), plt.imshow(img)
-    # plt.title('Original'), plt.xticks([]), plt.yticks([])
-    # plt.subplot(212), plt.imshow(featured_img, cmap='gray')
-    # plt.title('Output Image'), plt.xticks([]), plt.yticks([])
-    # plt.show()
-
     gray = cv2.cvtColor(featured_img, cv2.COLOR_BGR2GRAY)
 
     if cv2.countNonZero(gray) <= 1500:
@@ -172,45 +158,47 @@ def pinhole(frame):
     gray = 255 - gray
 
     holes, hierarchy = cv2.findContours(gray, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-    print("Number of holes:", len(holes))
+
     counter = 0
 
     for cnt in holes:
         area = cv2.contourArea(cnt)
         (x, y, w, h) = cv2.boundingRect(cnt)
-        if area < 300:
-            counter += 1
-            cv2.drawContours(frame, [cnt], 0, (255, 0, 0), 2)
-            cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
-            cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
+        if area < 0.01 or area > 70:
+            continue
+        counter += 1
+        cv2.drawContours(frame, [cnt], 0, (255, 0, 0), 2)
+        cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
+        cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
     cv2.imshow('pinhole', imutils.resize(frame, width=1024))
     cv2.waitKey()
 
     cv2.destroyAllWindows()
+    print("Number of holes:", counter)
     return counter
 
 
-# todo: change to elif
 def wood_defect_detection_system():
-    image_path = 'imageInput/knot/2.bmp'
+    image_path = 'imageInput/pinhole/6.bmp'
     frame = cv2.imread(image_path)
+    if frame is None:
+        print('Could not open or find the image: ', image_path)
+        exit(0)
     print("Reading image from " + image_path)
 
     # image processing for wood defect detection system
 
-    # 1. image preprocessing???
-    # transform to grayscale
-    # transformation techniques
-
-    # 2. size detection
+    # 1. size detection
     minimum_width = 3200
+
+    # width < 3200: undersized
 
     if frame.shape[1] < minimum_width:
         print("The wood is undersized.")
         return
     else:
-        # 3. dead knot detection / small knots detection
+        # 2. dead knot detection / small knots detection
         has_dead_knot = dead_knot(frame)
 
         if has_dead_knot:
@@ -218,30 +206,31 @@ def wood_defect_detection_system():
             print("\n\nGrade of the wood: " + grade)
             return
 
-        # 4. crack detection
+        # 3. crack detection
         has_cracks = crack(frame)
-        # if has_cracks:
-        #     grade = "C"
-        #     print("\n\nGrade of the wood: " + grade)
-        #     return
+        if has_cracks:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
 
-        # 5. pinhole detection
+        # 4. pinhole detection
         holes = pinhole(frame)
 
-        # defect detection logic
-
-        # holes > 55: many holes - Grade C
-        # holes 1-55: less holes - Grade B
+        # holes > 10: many holes - Grade C
+        # holes 1-10: less holes - Grade B
         # holes = 0: no holes - Grade A
 
-        has_small_knots = small_knot(frame)
-
-        if holes > 55:  # set the minimum number of holes
+        if holes > 10:  # set the minimum number of holes
             grade = "C"
-        elif has_small_knots or holes > 0:
+        elif holes > 0:
             grade = "B"
-        else:
-            grade = "A"
+        else:  # holes == 0
+            # 5. small knot detection
+            has_small_knots = small_knot(frame)
+            if has_small_knots:
+                grade = "B"
+            else:
+                grade = "A"
         print("\n\nGrade of the wood: " + grade)
 
 

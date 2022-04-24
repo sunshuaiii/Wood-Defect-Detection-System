@@ -30,7 +30,7 @@ def non_max_suppression(data, win):
 
 
 # start calulcation
-gray_image = cv2.imread("imageInput/pinhole/4.bmp", 0)
+gray_image = cv2.imread("imageInput/crack/3.bmp", 0)
 
 with_nmsup = True  # apply non-maximal suppression
 fudgefactor = 1.3  # with this threshold you can play a little bit
