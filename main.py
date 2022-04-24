@@ -137,8 +137,6 @@ def crack(img):
     closing = cv2.morphologyEx(edges, cv2.MORPH_CLOSE, kernel)
 
     # Create feature detecting method
-    # sift = cv2.xfeatures2d.SIFT_create()
-    # surf = cv2.xfeatures2d.SURF_create()
     orb = cv2.ORB_create(nfeatures=1500)
 
     # Make featured Image
