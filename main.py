@@ -99,9 +99,30 @@ def small_knot(frame):
 
 def crack(img):
     print("\nDetecting cracks...")
+
+    # # crop the image
+    cropped = img[:, 120:img.shape[1]-120]
+
     # Convert into gray scale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    gray = gray - 15
+    gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
+
+    print(np.average(gray))
+    if np.average(gray) > 140:
+        gray = gray - 50
+    elif np.average(gray) > 130:
+        gray = gray - 40
+    elif np.average(gray) > 120:
+        gray = gray - 30
+    elif np.average(gray) > 110:
+        gray = gray - 20
+    elif np.average(gray) > 100:
+        gray = gray - 10
+    elif np.average(gray) > 90:
+        gray = gray - 20
+    if np.average(gray) > 95:
+        gray = gray - 15
+
+    print(np.average(gray))
 
     # Image processing ( smoothing )
     # Averaging
@@ -140,8 +161,9 @@ def crack(img):
     cv2.destroyAllWindows()
 
     gray = cv2.cvtColor(featured_img, cv2.COLOR_BGR2GRAY)
+    print(cv2.countNonZero(gray))
 
-    if cv2.countNonZero(gray) <= 1500:
+    if cv2.countNonZero(gray) <= 2100:
         print("No crack")
         return False
     else:
@@ -180,7 +202,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/pinhole/6.bmp'
+    image_path = 'imageInput/pinhole/1.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)

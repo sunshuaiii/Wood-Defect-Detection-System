@@ -11,7 +11,7 @@ se = cv.getStructuringElement(cv.MORPH_RECT, (10, 10), (-1, -1))
 binary = cv.morphologyEx(binary, cv.MORPH_OPEN, se)
 cv.imshow("binary", binary)
 
-contours, hierachy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
+contours, hierarchy = cv.findContours(binary, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
 height, width = src.shape[:2]
 for c in range(len(contours)):
     x, y, w, h = cv.boundingRect(contours[c])
