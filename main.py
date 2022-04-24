@@ -1,10 +1,6 @@
 import cv2
 import numpy as np
-from matplotlib import pyplot as plt
 import imutils
-
-
-# todo: how to detect the darker woods?
 
 
 # return true if has dead knot
@@ -14,7 +10,7 @@ def dead_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([99, 255, 100])
+    upper_red = np.array([89, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -26,7 +22,7 @@ def dead_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 50000:
+        if cv2.contourArea(contour) < 3000 or cv2.contourArea(contour) < 50000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -60,7 +56,7 @@ def small_knot(frame):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([99, 255, 100])
+    upper_red = np.array([89, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -72,7 +68,7 @@ def small_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 800 or cv2.contourArea(contour) > 7000:
+        if cv2.contourArea(contour) < 800 or cv2.contourArea(contour) > 3000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -101,32 +97,27 @@ def crack(img):
     print("\nDetecting cracks...")
 
     # # crop the image
-    cropped = img[:, 120:img.shape[1]-120]
+    cropped = img[:, 120:img.shape[1] - 120]
 
     # Convert into gray scale
     gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
 
-    print(np.average(gray))
     if np.average(gray) > 140:
-        gray = gray - 50
+        gray = gray - 60
     elif np.average(gray) > 130:
-        gray = gray - 40
-    elif np.average(gray) > 120:
         gray = gray - 30
-    elif np.average(gray) > 110:
-        gray = gray - 20
+    elif np.average(gray) > 120:
+        gray = gray - 40
     elif np.average(gray) > 100:
-        gray = gray - 10
+        gray = gray - 25
     elif np.average(gray) > 90:
         gray = gray - 20
-    if np.average(gray) > 95:
+    if np.average(gray) > 85 or np.average(gray) < 88:
         gray = gray - 15
-
-    print(np.average(gray))
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray, (5, 5))
+    blur = cv2.blur(gray, (6, 6))
 
     # Apply logarithmic transform
     np.seterr(divide='ignore')
@@ -161,9 +152,11 @@ def crack(img):
     cv2.destroyAllWindows()
 
     gray = cv2.cvtColor(featured_img, cv2.COLOR_BGR2GRAY)
-    print(cv2.countNonZero(gray))
+    print("Area detected: ", cv2.countNonZero(gray))
 
-    if cv2.countNonZero(gray) <= 2100:
+    # Assume area detected < 14000 is not cracked
+
+    if cv2.countNonZero(gray) < 14000:
         print("No crack")
         return False
     else:
@@ -202,7 +195,7 @@ def pinhole(frame):
 
 
 def wood_defect_detection_system():
-    image_path = 'imageInput/pinhole/1.bmp'
+    image_path = 'imageInput/crack/2.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
