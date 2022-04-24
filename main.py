@@ -9,8 +9,14 @@ def dead_knot(frame):
     frame = imutils.resize(frame, width=1024)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
+    print(np.average(hsv))
+    if np.average(hsv) < 80:
+        hsv = hsv + 50
+    elif np.average(hsv) < 100:
+        hsv = hsv + 40
+
     lower_red = np.array([0, 0, 0])
-    upper_red = np.array([89, 255, 100])
+    upper_red = np.array([95, 255, 100])
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
@@ -22,7 +28,7 @@ def dead_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 3000 or cv2.contourArea(contour) < 50000:
+        if cv2.contourArea(contour) < 2000:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
@@ -195,7 +201,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/pinhole/1.bmp'
+    image_path = 'imageInput/knot/3.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
