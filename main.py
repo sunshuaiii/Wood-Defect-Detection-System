@@ -3,8 +3,7 @@ import numpy as np
 import imutils
 
 # todo remove the noise for knot and crack - smoothing or morphological
-# todo knot 3
-# todo show full size images for pinhole
+# todo knot 3 and all the cracks
 
 
 # return true if has dead knot
