@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 import imutils
 
+# todo remove the noise for knot and crack - smoothing or morphological
+# todo knot 3
+# todo show full size images for pinhole
+
 
 # return true if has dead knot
 def dead_knot(frame):
@@ -167,6 +171,15 @@ def crack(img):
         return True
 
 
+# rescale the frame
+def rescale_frame(frame, scale=0.75):
+    width = int(frame.shape[1] * scale)
+    height = int(frame.shape[0] * scale)
+    dimensions = (width, height)
+
+    return cv2.resize(frame, dimensions, interpolation=cv2.INTER_AREA)
+
+
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
@@ -189,7 +202,7 @@ def pinhole(frame):
         cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
         cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-    cv2.imshow('pinhole', imutils.resize(frame, width=1024))
+    cv2.imshow('pinhole', rescale_frame(frame))
     cv2.waitKey()
 
     cv2.destroyAllWindows()
@@ -200,7 +213,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/pinhole/1.bmp'
+    image_path = 'imageInput/pinhole/3.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
