@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import imutils
 
+
 # todo remove the noise for knot and crack - smoothing or morphological
 # todo knot 3 and all the cracks
 
@@ -9,24 +10,23 @@ import imutils
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
-    #resize the pic 
+    # resize the pic
     frame = imutils.resize(frame, width=1024)
-    #chg image from BGR to RGB
+    # chg image from BGR to RGB
     RGB_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-    #apply Gaussian to the image
-    blur = cv2.GaussianBlur(RGB_img, (3,3), cv2.BORDER_DEFAULT)
+    # apply Gaussian to the image
+    blur = cv2.GaussianBlur(RGB_img, (3, 3), cv2.BORDER_DEFAULT)
 
-    #increase the brightness 
+    # increase the brightness
     if np.average(blur) < 82:
         blur = blur + 40
     elif np.average(blur) < 100:
         blur = blur + 30
 
-
-    #define the lower and upper boundary for the red color to be used as mask
-    lower_red = np.array([0, 0,0])
+    # define the lower and upper boundary for the red color to be used as mask
+    lower_red = np.array([0, 0, 0])
     upper_red = np.array([99, 255, 100])
-    #create a mask of the image which has the contrast of color 
+    # create a mask of the image which has the contrast of color
     mask = cv2.inRange(blur, lower_red, upper_red)
 
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
@@ -42,7 +42,6 @@ def dead_knot(frame):
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, "Status: {}".format('Dead Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-
 
     # Display Results
     cv2.imshow('Original - Dead Knot', frame)
@@ -66,12 +65,11 @@ def small_knot(frame):
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    blur = cv2.GaussianBlur(gray, (9,9), cv2.BORDER_DEFAULT)
+    blur = cv2.GaussianBlur(gray, (9, 9), cv2.BORDER_DEFAULT)
     if np.average(blur) > 120:
         blur = blur - 30
 
-
-    #create a mask of the image where the ROI lies in between the range specified
+    # create a mask of the image where the ROI lies in between the range specified
     mask = cv2.inRange(blur, 70, 88)
 
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
@@ -110,29 +108,31 @@ def small_knot(frame):
 
 def crack(img):
     print("\nDetecting cracks...")
-    
-    # # crop the image
+
+    # crop the image
     cropped = img[:, 120:img.shape[1] - 120]
 
     # Convert into gray scale
     gray = cv2.cvtColor(cropped, cv2.COLOR_BGR2GRAY)
 
     if np.average(gray) > 140:
-        gray = gray - 60
-    elif np.average(gray) > 130:
-        gray = gray - 30
+        gray = gray - 70
+    # elif np.average(gray) > 130:
+    #     gray = gray - 30
     elif np.average(gray) > 120:
-        gray = gray - 40
+        gray = gray - 50
+    elif np.average(gray) > 110:
+        gray = gray - 30
     elif np.average(gray) > 100:
-        gray = gray - 25
+        gray = gray - 40
     elif np.average(gray) > 90:
+        gray = gray - 35
+    elif np.average(gray) > 80:
         gray = gray - 20
-    if np.average(gray) > 85 or np.average(gray) < 88:
-        gray = gray - 15
 
     # Image processing ( smoothing )
     # Averaging
-    blur = cv2.blur(gray, (6, 6))
+    blur = cv2.blur(gray, (4, 4))
 
     # Apply logarithmic transform
     np.seterr(divide='ignore')
@@ -142,10 +142,10 @@ def crack(img):
     img_log = np.array(img_log, dtype=np.uint8)
 
     # Image smoothing: bilateral filter
-    bilateral = cv2.bilateralFilter(img_log, 5, 75, 75)
+    bilateral = cv2.bilateralFilter(img_log, 8, 75, 75)
 
     # Canny Edge Detection
-    edges = cv2.Canny(bilateral, 100, 200)
+    edges = cv2.Canny(bilateral, 280, 280)
 
     # Morphological Closing Operator
     kernel = np.ones((5, 5), np.uint8)
@@ -169,7 +169,7 @@ def crack(img):
 
     # Assume area detected < 14000 is not cracked
 
-    if cv2.countNonZero(gray) < 14000:
+    if cv2.countNonZero(gray) < 1100:
         print("No crack")
         return False
     else:
