@@ -9,18 +9,25 @@ import imutils
 # return true if has dead knot
 def dead_knot(frame):
     print("\nDetecting dead knot...")
+    #resize the pic 
     frame = imutils.resize(frame, width=1024)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #chg image from BGR to RGB
+    RGB_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    #apply Gaussian to the image
+    blur = cv2.GaussianBlur(RGB_img, (3,3), cv2.BORDER_DEFAULT)
 
-    if np.average(hsv) < 82:
-        hsv = hsv + 50
-    elif np.average(hsv) < 100:
-        hsv = hsv + 40
+    #increase the brightness 
+    if np.average(blur) < 82:
+        blur = blur + 40
+    elif np.average(blur) < 100:
+        blur = blur + 30
 
-    lower_red = np.array([0, 0, 0])
-    upper_red = np.array([95, 255, 100])
 
-    mask = cv2.inRange(hsv, lower_red, upper_red)
+    #define the lower and upper boundary for the red color to be used as mask
+    lower_red = np.array([0, 0,0])
+    upper_red = np.array([99, 255, 100])
+    #create a mask of the image which has the contrast of color 
+    mask = cv2.inRange(blur, lower_red, upper_red)
 
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
     dilated = cv2.dilate(thresh, None, iterations=1)
@@ -30,19 +37,17 @@ def dead_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 2000:
+        if cv2.contourArea(contour) < 2500:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, "Status: {}".format('Dead Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-    res1 = cv2.bitwise_and(frame, frame, mask=mask)
-    res2 = cv2.bitwise_not(res1)
 
     # Display Results
     cv2.imshow('Original - Dead Knot', frame)
+    cv2.imshow('Average', blur)
     cv2.imshow('mask', mask)
-    cv2.imshow('res', res2)
     cv2.waitKey()
 
     cv2.destroyAllWindows()
@@ -68,7 +73,7 @@ def small_knot(frame):
 
     mask = cv2.inRange(hsv, lower_red, upper_red)
 
-    _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
+    _, thresh = cv2.threshold(mask, 200, 255, cv2.THRESH_BINARY)
     dilated = cv2.dilate(thresh, None, iterations=1)
 
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -103,7 +108,7 @@ def small_knot(frame):
 
 def crack(img):
     print("\nDetecting cracks...")
-
+    
     # # crop the image
     cropped = img[:, 120:img.shape[1] - 120]
 
@@ -212,7 +217,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/pinhole/6.bmp'
+    image_path = 'imageInput/knot/2.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
