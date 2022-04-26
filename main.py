@@ -65,15 +65,16 @@ def small_knot(frame):
     print("\nDetecting small knots...")
     # resize img and chg to RGB
     frame = imutils.resize(frame, width=1024)
-    # frame = frame + 20
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    blur = cv2.GaussianBlur(gray, (9,9), cv2.BORDER_DEFAULT)
+    if np.average(blur) > 120:
+        blur = blur - 30
 
-    lower_red = np.array([0, 0, 0])
-    upper_red = np.array([89, 255, 100])
 
-    mask = cv2.inRange(hsv, lower_red, upper_red)
+    #create a mask of the image where the ROI lies in between the range specified
+    mask = cv2.inRange(blur, 70, 88)
 
-    _, thresh = cv2.threshold(mask, 200, 255, cv2.THRESH_BINARY)
+    _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
     dilated = cv2.dilate(thresh, None, iterations=1)
 
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
@@ -81,19 +82,20 @@ def small_knot(frame):
 
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
-        if cv2.contourArea(contour) < 800 or cv2.contourArea(contour) > 3000:
+        if cv2.contourArea(contour) < 300 or cv2.contourArea(contour) > 500:
             continue
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, "Status: {}".format('Small Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-    res1 = cv2.bitwise_and(frame, frame, mask=mask)
-    res2 = cv2.bitwise_not(res1)
+    # res1 = cv2.bitwise_and(frame, frame, mask=mask)
+    # res2 = cv2.bitwise_not(res1)
 
     # Display Results
     cv2.imshow('Original - Small Knot', frame)
     cv2.imshow('mask', mask)
-    cv2.imshow('res', res2)
+    cv2.imshow('average', blur)
+    # cv2.imshow('res', res2)
     cv2.waitKey()
 
     cv2.destroyAllWindows()
@@ -217,7 +219,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/knot/2.bmp'
+    image_path = 'imageInput/smallknot/2.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
