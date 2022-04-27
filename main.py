@@ -3,8 +3,20 @@ import numpy as np
 import imutils
 
 
-# todo remove the noise for knot and crack - smoothing or morphological
-# todo knot 3 and all the cracks
+# return true if undersized
+def undersized(frame):
+    minimum_width = 3200
+
+    longer = 0
+    if frame.shape[1] > frame.shape[0]:
+        longer = frame.shape[1]
+    else:
+        longer = frame.shape[0]
+
+    if longer > minimum_width:
+        return False
+    else:
+        return True
 
 
 # return true if has dead knot
@@ -178,7 +190,7 @@ def crack(img):
 
 
 # rescale the frame
-def rescale_frame(frame, scale = 0.35):
+def rescale_frame(frame, scale=0.35):
     width = int(frame.shape[1] * scale)
     height = int(frame.shape[0] * scale)
     dimensions = (width, height)
@@ -231,11 +243,7 @@ def wood_defect_detection_system():
     # image processing for wood defect detection system
 
     # 1. size detection
-    minimum_width = 3200
-
-    # width < 3200: undersized
-
-    if frame.shape[1] < minimum_width:
+    if undersized(frame):
         print("The wood is undersized.")
         return
     else:
