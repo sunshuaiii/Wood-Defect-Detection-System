@@ -18,9 +18,8 @@ def undersized(frame):
     #     return False
     # else:
     #     return True
+
     frame = imutils.resize(frame, width=1024)
-    # blur = cv2.blur(frame, (4, 4))
-    # cv2.imshow("blur", blur)
 
     # convert to hsv colorspace
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -42,7 +41,7 @@ def undersized(frame):
     # print("Total area: ", total_area)
     # print("Percentage: ", area_detected/total_area)
 
-    # Assume area detected < 1100 is not cracked
+    # Assume area detected < 120000 is not undersized
 
     if cv2.countNonZero(mask) < 120000:
         return False
