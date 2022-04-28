@@ -19,31 +19,27 @@ def undersized(frame):
     # else:
     #     return True
 
-    frame = imutils.resize(frame, width=1024)
-
     # convert to hsv colorspace
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-    cv2.imshow("hsv", hsv)
 
-    # lower bound and upper bound for brown color
-    lower_bound = np.array([15, 100, 20])
+    # lower bound and upper bound for brown and orange
+    lower_bound = np.array([20, 30, 20])
     upper_bound = np.array([90, 255, 255])
 
     # find the colors within the boundaries
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
-    cv2.imshow("Image", mask)
 
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
     area_detected = cv2.countNonZero(mask)
     total_area = mask.shape[0] * mask.shape[1]
+    percentage = area_detected / total_area * 100
     print("Area detected: ", area_detected)
-    # print("Total area: ", total_area)
-    # print("Percentage: ", area_detected/total_area)
+    print("Total area: ", total_area)
+    result = "Percentage: {:0.2f}%".format(percentage)
+    print(result)
 
-    # Assume area detected < 120000 is not undersized
+    # Assume area detected < 12 percentage is not undersized
 
-    if cv2.countNonZero(mask) < 120000:
+    if percentage < 12:
         return False
     else:
         return True
