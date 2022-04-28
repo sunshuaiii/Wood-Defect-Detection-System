@@ -33,15 +33,14 @@ def undersized(frame):
     # find the colors within the boundaries
     mask = cv2.inRange(hsv, lower_bound, upper_bound)
     cv2.imshow("Image", mask)
+
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-
-    gray = cv2.cvtColor(mask, 0)
-    print("Area detected: ", cv2.countNonZero(gray))
+    print("Area detected: ", cv2.countNonZero(mask))
 
     # Assume area detected < 1100 is not cracked
 
-    if cv2.countNonZero(gray) < 1100:
+    if cv2.countNonZero(mask) < 1100:
         print("Not undersized")
         return False
     else:
