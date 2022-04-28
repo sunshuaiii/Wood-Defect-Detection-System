@@ -36,15 +36,17 @@ def undersized(frame):
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
-    print("Area detected: ", cv2.countNonZero(mask))
+    area_detected = cv2.countNonZero(mask)
+    total_area = mask.shape[0] * mask.shape[1]
+    print("Area detected: ", area_detected)
+    # print("Total area: ", total_area)
+    # print("Percentage: ", area_detected/total_area)
 
     # Assume area detected < 1100 is not cracked
 
-    if cv2.countNonZero(mask) < 1100:
-        print("Not undersized")
+    if cv2.countNonZero(mask) < 120000:
         return False
     else:
-        print("Undersized")
         return True
 
 
@@ -261,7 +263,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/undersized/1.bmp'
+    image_path = 'imageInput/undersized/2.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
@@ -274,41 +276,41 @@ def wood_defect_detection_system():
     if undersized(frame):
         print("The wood is undersized.")
         return
-    # else:
-    #     # 2. dead knot detection / small knots detection
-    #     has_dead_knot = dead_knot(frame)
-    #
-    #     if has_dead_knot:
-    #         grade = "C"
-    #         print("\n\nGrade of the wood: " + grade)
-    #         return
-    #
-    #     # 3. crack detection
-    #     has_cracks = crack(frame)
-    #     if has_cracks:
-    #         grade = "C"
-    #         print("\n\nGrade of the wood: " + grade)
-    #         return
-    #
-    #     # 4. pinhole detection
-    #     holes = pinhole(frame)
-    #
-    #     # holes > 10: many holes - Grade C
-    #     # holes 1-10: less holes - Grade B
-    #     # holes = 0: no holes and no small knot - Grade A
-    #
-    #     if holes > 10:  # set the minimum number of holes
-    #         grade = "C"
-    #     elif holes > 0:
-    #         grade = "B"
-    #     else:  # holes == 0
-    #         # 5. small knot detection
-    #         has_small_knots = small_knot(frame)
-    #         if has_small_knots:
-    #             grade = "B"
-    #         else:
-    #             grade = "A"
-    #     print("\n\nGrade of the wood: " + grade)
+    else:
+        # 2. dead knot detection / small knots detection
+        has_dead_knot = dead_knot(frame)
+
+        if has_dead_knot:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
+
+        # 3. crack detection
+        has_cracks = crack(frame)
+        if has_cracks:
+            grade = "C"
+            print("\n\nGrade of the wood: " + grade)
+            return
+
+        # 4. pinhole detection
+        holes = pinhole(frame)
+
+        # holes > 10: many holes - Grade C
+        # holes 1-10: less holes - Grade B
+        # holes = 0: no holes and no small knot - Grade A
+
+        if holes > 10:  # set the minimum number of holes
+            grade = "C"
+        elif holes > 0:
+            grade = "B"
+        else:  # holes == 0
+            # 5. small knot detection
+            has_small_knots = small_knot(frame)
+            if has_small_knots:
+                grade = "B"
+            else:
+                grade = "A"
+        print("\n\nGrade of the wood: " + grade)
 
 
 if __name__ == "__main__":
