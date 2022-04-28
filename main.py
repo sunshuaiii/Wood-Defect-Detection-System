@@ -21,6 +21,7 @@ def undersized(frame):
 
     # convert to hsv colorspace
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    cv2.imshow("hsv - Undersized Detection", imutils.resize(hsv, width=1024))
 
     # lower bound and upper bound for brown and orange
     lower_bound = np.array([20, 30, 20])
@@ -40,8 +41,15 @@ def undersized(frame):
     # Assume area detected < 12 percentage is not undersized
 
     if percentage < 12:
+        cv2.imshow("Original - Undersized detection", imutils.resize(frame, width=1024))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         return False
     else:
+        cv2.putText(frame, "Status: {}".format('Undersized'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
+        cv2.imshow("Original - Undersized detection", imutils.resize(frame, width=1024))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         return True
 
 
@@ -82,9 +90,9 @@ def dead_knot(frame):
         cv2.putText(frame, "Status: {}".format('Dead Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
     # Display Results
-    cv2.imshow('Original - Dead Knot', frame)
-    cv2.imshow('Average', blur)
-    cv2.imshow('mask', mask)
+    cv2.imshow('Original - Dead Knot Detection', frame)
+    cv2.imshow('Average - Dead Knot Detection', blur)
+    cv2.imshow('mask - Dead Knot Detection', mask)
     cv2.waitKey()
 
     cv2.destroyAllWindows()
@@ -128,9 +136,9 @@ def small_knot(frame):
     # res2 = cv2.bitwise_not(res1)
 
     # Display Results
-    cv2.imshow('Original - Small Knot', frame)
-    cv2.imshow('mask', mask)
-    cv2.imshow('average', blur)
+    cv2.imshow('Original - Small Knot Detection', frame)
+    cv2.imshow('mask - Small Knot Detection', mask)
+    cv2.imshow('average - Small Knot Detection', blur)
     # cv2.imshow('res', res2)
     cv2.waitKey()
 
@@ -196,9 +204,9 @@ def crack(img):
     key_points, descriptors = orb.detectAndCompute(closing, None)
     featured_img = cv2.drawKeypoints(closing, key_points, None)
 
-    cv2.imshow('Original - Crack', imutils.resize(img, width=1024))
-    cv2.imshow("img_log", imutils.resize(img_log, width=1024))
-    cv2.imshow('Output', imutils.resize(featured_img, width=1024))
+    cv2.imshow('Original - Crack Detection', imutils.resize(img, width=1024))
+    cv2.imshow("img_log - Crack Detection", imutils.resize(img_log, width=1024))
+    cv2.imshow('Output - Crack Detection', imutils.resize(featured_img, width=1024))
     cv2.waitKey()
     cv2.destroyAllWindows()
 
@@ -247,7 +255,7 @@ def pinhole(frame):
         cv2.rectangle(frame, (x - 5, y - 5), (x + w + 5, y + h + 5), (0, 0, 255), 2)
         cv2.putText(frame, str(counter), (x - 5, y - 5), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
 
-    cv2.imshow('pinhole', rescale_frame(frame))
+    cv2.imshow('Pinhole Detection', rescale_frame(frame))
     cv2.waitKey()
 
     cv2.destroyAllWindows()
@@ -258,7 +266,7 @@ def pinhole(frame):
 def wood_defect_detection_system():
     # change the image_path to detect various defect types of woods
 
-    image_path = 'imageInput/undersized/2.bmp'
+    image_path = 'imageInput/crack/1.bmp'
     frame = cv2.imread(image_path)
     if frame is None:
         print('Could not open or find the image: ', image_path)
