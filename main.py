@@ -230,8 +230,11 @@ def rescale_frame(frame, scale=0.35):
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
-
+    
+    # convert image from BGR to GRAY
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    
+    # Applying treshhold to the grayscale image
     gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)[1]
     gray = 255 - gray
     cv2.imshow("gray", rescale_frame(gray))
