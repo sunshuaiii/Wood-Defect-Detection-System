@@ -61,14 +61,14 @@ def dead_knot(frame):
     upper_red = np.array([99, 255, 100])
     # create a mask of the image which has the contrast of color
     mask = cv2.inRange(blur, lower_red, upper_red)
-    
+
     # Applying treshhold to the mask
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
-    
-    #Increase the white region area using dilate
+
+    # Increase the white region area using dilate
     dilated = cv2.dilate(thresh, None, iterations=1)
-    
-    #Detecting the contours and placing them in an array
+
+    # Detecting the contours and placing them in an array
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     knot_number = 0
 
@@ -112,14 +112,14 @@ def small_knot(frame):
 
     # Applying treshhold to the mask
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
-    
-    #Increase the white region area using dilate
+
+    # Increase the white region area using dilate
     dilated = cv2.dilate(thresh, None, iterations=1)
-    
-    #Detecting the contours and placing them in an array
+
+    # Detecting the contours and placing them in an array
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     knot_number = 0
-    
+
     # Detecting dead knots using contour area
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
@@ -128,7 +128,6 @@ def small_knot(frame):
         knot_number = knot_number + 1
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, "Status: {}".format('Small Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
-
 
     # Display Results
     cv2.imshow('Original - Small Knot Detection', frame)
@@ -230,10 +229,10 @@ def rescale_frame(frame, scale=0.35):
 # return number of holes in the wood
 def pinhole(frame):
     print("\nDetecting pinhole...")
-    
+
     # convert image from BGR to GRAY
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    
+
     # Applying treshhold to the grayscale image
     gray = cv2.threshold(gray, 20, 255, cv2.THRESH_BINARY)[1]
     gray = 255 - gray
