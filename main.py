@@ -6,19 +6,6 @@ import imutils
 # undersized: to determine the wood color, brown and orange are not acceptable
 # return true if undersized
 def undersized(frame):
-    # minimum_width = 3200
-    #
-    # longer = 0
-    # if frame.shape[1] > frame.shape[0]:
-    #     longer = frame.shape[1]
-    # else:
-    #     longer = frame.shape[0]
-    #
-    # if longer > minimum_width:
-    #     return False
-    # else:
-    #     return True
-
     # convert to hsv colorspace
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     cv2.imshow("hsv - Undersized Detection", imutils.resize(hsv, width=1024))
