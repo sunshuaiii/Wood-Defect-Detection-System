@@ -61,13 +61,18 @@ def dead_knot(frame):
     upper_red = np.array([99, 255, 100])
     # create a mask of the image which has the contrast of color
     mask = cv2.inRange(blur, lower_red, upper_red)
-
+    
+    # Applying treshhold to the mask
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
+    
+    #Increase the white region area using dilate
     dilated = cv2.dilate(thresh, None, iterations=1)
-
+    
+    #Detecting the contours and placing them in an array
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     knot_number = 0
 
+    # Detecting dead knots using contour area
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
         if cv2.contourArea(contour) < 2500:
@@ -105,12 +110,17 @@ def small_knot(frame):
     # create a mask of the image where the ROI lies in between the range specified
     mask = cv2.inRange(blur, 70, 88)
 
+    # Applying treshhold to the mask
     _, thresh = cv2.threshold(mask, 170, 255, cv2.THRESH_BINARY)
+    
+    #Increase the white region area using dilate
     dilated = cv2.dilate(thresh, None, iterations=1)
-
+    
+    #Detecting the contours and placing them in an array
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     knot_number = 0
-
+    
+    # Detecting dead knots using contour area
     for contour in contours:
         (x, y, w, h) = cv2.boundingRect(contour)
         if cv2.contourArea(contour) < 300 or cv2.contourArea(contour) > 500:
@@ -119,14 +129,12 @@ def small_knot(frame):
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, "Status: {}".format('Small Knot'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 0), 2)
 
-    # res1 = cv2.bitwise_and(frame, frame, mask=mask)
-    # res2 = cv2.bitwise_not(res1)
 
     # Display Results
     cv2.imshow('Original - Small Knot Detection', frame)
     cv2.imshow('mask - Small Knot Detection', mask)
     cv2.imshow('average - Small Knot Detection', blur)
-    # cv2.imshow('res', res2)
+
     cv2.waitKey()
 
     cv2.destroyAllWindows()
